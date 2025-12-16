@@ -7,8 +7,9 @@ import (
 )
 
 type SuccessResponse struct {
-	Data   any `json:"data"`
-	Status int `json:"status"`
+	Data   any     `json:"data"`
+	Status int     `json:"status"`
+	Token  *string `json:"token,omitempty"`
 }
 
 type ErrorResponse struct {
@@ -30,6 +31,22 @@ func RespondSuccess(w http.ResponseWriter, status int, data any) {
 	_ = json.NewEncoder(w).Encode(SuccessResponse{
 		Status: status,
 		Data:   data,
+	})
+}
+
+func RespondSuccessWithToken(
+	w http.ResponseWriter,
+	status int,
+	data any,
+	token string,
+) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+
+	_ = json.NewEncoder(w).Encode(SuccessResponse{
+		Status: status,
+		Data:   data,
+		Token:  &token,
 	})
 }
 

@@ -25,6 +25,7 @@ type App struct {
 
 type Controllers struct {
 	User *controller.UserController
+	Auth *controller.AuthController
 }
 
 func New() *App {
@@ -40,11 +41,14 @@ func New() *App {
 	})
 
 	userRepo := repository.NewUserRepo(db)
+	authRepo := repository.NewAuthRepo(db)
 
 	userService := service.NewUserService(userRepo)
+	authService := service.NewAuthService(authRepo, userRepo)
 
 	controllers := &Controllers{
 		User: controller.NewUserController(userService),
+		Auth: controller.NewAuthController(authService),
 	}
 
 	router := initRoutes(controllers)
@@ -68,7 +72,10 @@ func initRoutes(ctrl *Controllers) *chi.Mux {
 	})
 
 	r.Route("/user", func(r chi.Router) {
-		router.Userroutes(r, *ctrl.User)
+		router.UserRoutes(r, *ctrl.User)
+	})
+	r.Route("/auth", func(r chi.Router) {
+		router.AuthRoutes(r, *ctrl.Auth)
 	})
 
 	return r
