@@ -1,9 +1,8 @@
 package main
 
 import (
-	"auth/main/app"
+	"auth/app"
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -16,14 +15,12 @@ func main() {
 		log.Println("ENV LOAD ERROR:", err)
 	}
 
-	db := app.InitDb()
-	print(db)
 	app := app.New()
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
 	if err := app.Start(ctx); err != nil {
-		fmt.Errorf("failed to start app: ", err)
+		log.Fatalf("failed to start app: %v", err)
 	}
 }
