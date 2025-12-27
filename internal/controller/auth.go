@@ -42,23 +42,11 @@ func (h *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s := h.service.Auth()
-	res, refreshToken, token, err := s.Login(r.Context(), user)
+	res,token, err := s.Login(r.Context(), user)
 	if err != nil {
 		helper.RespondError(w, http.StatusUnauthorized, err)
 		return
 	}
-
-	cookie := http.Cookie{
-		Name:     "token",
-		Value:    refreshToken,
-		Path:     "/",
-		MaxAge:   3600 * 24 * 7,
-		HttpOnly: true,
-		Secure:   true,
-		SameSite: http.SameSiteLaxMode,
-	}
-
-	http.SetCookie(w, &cookie)
 
 	helper.RespondSuccessWithToken(w, http.StatusAccepted, res, token)
 }

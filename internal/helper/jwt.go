@@ -61,8 +61,8 @@ func CreateAccessToken(user model.User) (string, error) {
 	}
 
 	claims := model.ClaimsModel{
-		UserId:   user.ID,
-		Role:     string(user.Role),
+		UserID:   user.ID,
+		Role:     user.Role,
 		Username: user.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   strconv.Itoa(user.ID),
@@ -79,14 +79,14 @@ func CreateRefreshToken(
 	ctx context.Context,
 	user model.User,
 	rdb *redis.Client,
-) (string, error) {
+) error {
 	if rdb == nil {
-		return "", errors.New("redis client required for refresh token")
+		return errors.New("redis client required for refresh token")
 	}
 
 	secret := os.Getenv("JWT_REFRESH_SECRET")
 	if secret == "" {
-		return "", errors.New("JWT_REFRESH_SECRET missing")
+		return errors.New("JWT_REFRESH_SECRET missing")
 	}
 
 	expiryStr := os.Getenv("JWT_REFRESH_EXPIRED")
@@ -96,15 +96,15 @@ func CreateRefreshToken(
 
 	duration, err := ParseExpiry(expiryStr)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	jti := uuid.NewString()
 	expiresAt := time.Now().Add(duration)
 
 	claims := model.ClaimsModel{
-		UserId:   user.ID,
-		Role:     string(user.Role),
+		UserID:   user.ID,
+		Role:     user.Role,
 		Username: user.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "auth-service",
@@ -118,15 +118,15 @@ func CreateRefreshToken(
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(secret))
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	key := refreshKey(jti)
 	if err := rdb.Set(ctx, key, hashToken(tokenString), duration).Err(); err != nil {
-		return "", err
+		return err
 	}
 
-	return tokenString, nil
+	return nil
 }
 
 func ValidateAccessToken(tokenString string) (*model.ClaimsModel, error) {

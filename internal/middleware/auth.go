@@ -1,4 +1,4 @@
-package middleware
+package middlewares
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"auth/internal/helper"
+	"auth/internal/model"
 )
 
 func JwtAuth(n http.Handler) http.Handler {
@@ -30,8 +31,47 @@ func JwtAuth(n http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "userId", claims.UserId)
+		type contextKey string
+		const (
+			userIDKey contextKey = "userID"
+			roleKey   contextKey = "role"
+		)
+
+		ctx := r.Context()
+		ctx = context.WithValue(ctx, userIDKey, claims.UserID)
+		ctx = context.WithValue(ctx, roleKey, claims.Role)
+
 		r = r.WithContext(ctx)
+
 		n.ServeHTTP(w, r)
 	})
+}
+
+func RoleChecker(allowedRoles ...model.Role) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			role, ok := r.Context().Value("role").(model.Role)
+			if !ok {
+				helper.RespondError(
+					w,
+					http.StatusUnauthorized,
+					fmt.Errorf("role not found in context"),
+				)
+				return
+			}
+
+			for _, allowed := range allowedRoles {
+				if role == allowed {
+					next.ServeHTTP(w, r)
+					return
+				}
+			}
+
+			helper.RespondError(
+				w,
+				http.StatusForbidden,
+				fmt.Errorf("forbidden"),
+			)
+		})
+	}
 }

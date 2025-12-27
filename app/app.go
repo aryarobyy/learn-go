@@ -7,7 +7,9 @@ import (
 	"os"
 	"time"
 
+	"auth/config"
 	"auth/internal/controller"
+	middlewares "auth/internal/middleware"
 	"auth/internal/repository"
 	"auth/internal/router"
 	"auth/internal/service"
@@ -25,7 +27,8 @@ type App struct {
 }
 
 func New() *App {
-	db := InitDb()
+	db := config.InitDb()
+	config.GoogleConfig()
 
 	redisAddr := os.Getenv("REDIS_ADDR")
 	if redisAddr == "" {
@@ -57,11 +60,14 @@ func initRoutes(ctrl controller.Controller) *chi.Mux {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
+	r.Use(middlewares.RateLimit)
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Server is running!"))
 	})
-
+	r.Get("/google_login", func(w http.ResponseWriter, r *http.Request) {
+		controller.GoogleLogin(w, r)
+	})
 	r.Route("/user", func(r chi.Router) {
 		router.UserRoutes(r, ctrl.User())
 	})

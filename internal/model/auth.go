@@ -25,8 +25,8 @@ type VerifyUsername struct {
 }
 
 type ClaimsModel struct {
-	UserId   int    `json:"id"`
-	Role     string `json:"role"`
+	UserID   int    `json:"id"`
+	Role     Role   `json:"role"`
 	Name     string `json:"name"`
 	Username string `json:"username"`
 	jwt.RegisteredClaims

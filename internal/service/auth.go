@@ -14,7 +14,7 @@ import (
 
 type AuthService interface {
 	Create(ctx context.Context, user model.User) (*model.User, error)
-	Login(ctx context.Context, user model.User) (*model.User, string, string, error)
+	Login(ctx context.Context, user model.User) (*model.User, string, error)
 	RefreshToken(ctx context.Context, refreshToken string) (string, error)
 }
 
@@ -37,6 +37,9 @@ func (h *authService) Create(ctx context.Context, user model.User) (*model.User,
 	if user.Username == "" && user.Password == "" {
 		return nil, fmt.Errorf("Username or password cannot be nul")
 	}
+	if user.Role == "" {
+		user.Role = "user"
+	}
 
 	if !helper.IsValidName(user.Name) {
 		return nil, fmt.Errorf("Name cannot contain name")
@@ -45,7 +48,7 @@ func (h *authService) Create(ctx context.Context, user model.User) (*model.User,
 	password := user.Password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, fmt.Errorf("failed to hashing password", err)
+		return nil, fmt.Errorf("failed to hashing password: %w", err)
 	}
 
 	registerData := model.User{
@@ -62,28 +65,28 @@ func (h *authService) Create(ctx context.Context, user model.User) (*model.User,
 	return res, nil
 }
 
-func (h *authService) Login(ctx context.Context, user model.User) (*model.User, string, string, error) {
+func (h *authService) Login(ctx context.Context, user model.User) (*model.User, string, error) {
 	rU := h.repo.User()
 	res, err := rU.GetByUsername(ctx, user.Username)
 	if err != nil {
-		return nil, "", "", fmt.Errorf("user not found", err)
+		return nil, "", fmt.Errorf("user not found: %w", err)
 	}
 
 	passErr := bcrypt.CompareHashAndPassword([]byte(res.Password), []byte(user.Password))
 	if passErr != nil {
-		return nil, "", "", fmt.Errorf("wrong password")
+		return nil, "", fmt.Errorf("wrong password")
 	}
 
-	refreshToken, err := helper.CreateRefreshToken(ctx, user, h.redisClient)
-	if err != nil {
-		return nil, "", "", fmt.Errorf("user not found", err)
+	if err := helper.CreateRefreshToken(ctx, user, h.redisClient); err != nil {
+		return nil, "", fmt.Errorf("user not found: %w", err)
 	}
 
 	token, err := helper.CreateAccessToken(*res)
 	if err != nil {
-		return nil, "", "", fmt.Errorf("user not found", err)
+		return nil, "", fmt.Errorf("user not found: %w", err)
 	}
-	return res, refreshToken, token, nil
+
+	return res, token, nil
 }
 
 // generate new token here
@@ -101,7 +104,7 @@ func (h *authService) RefreshToken(
 	}
 
 	user := model.User{
-		ID:       refreshClaims.UserId,
+		ID:       refreshClaims.UserID,
 		Username: refreshClaims.Username,
 		Role:     model.Role(refreshClaims.Role),
 	}
