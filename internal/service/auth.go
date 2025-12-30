@@ -16,7 +16,7 @@ import (
 type AuthService interface {
 	Create(ctx context.Context, user model.User) (*model.User, error)
 	Login(ctx context.Context, user model.User) (*model.User, string, string, error)
-	RefreshToken(ctx context.Context, refreshToken string) (string, error)
+	RefreshToken(ctx context.Context, refreshToken string) (string, string, error)
 }
 
 type authService struct {

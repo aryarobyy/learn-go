@@ -52,7 +52,7 @@ func CreateAccessToken(user model.User) (string, error) {
 
 	expiryStr := os.Getenv("JWT_EXPIRED")
 	if expiryStr == "" {
-		expiryStr = "30m"
+		expiryStr = "10m"
 	}
 
 	duration, err := ParseExpiry(expiryStr)

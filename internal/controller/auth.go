@@ -54,17 +54,17 @@ func (h *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 func (h *AuthController) RefreshToken(w http.ResponseWriter, r *http.Request) {
 	var refreshToken string
 
-	if err := json.NewDecoder(r.Body).Decode(refreshToken); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&refreshToken); err != nil {
 		helper.RespondError(w, http.StatusBadRequest, err)
 		return
 	}
 
 	s := h.service.Auth()
-	newToken, tokenErr := s.RefreshToken(r.Context(), refreshToken)
+	newAccessToken, newRefreshToken, tokenErr := s.RefreshToken(r.Context(), refreshToken)
 	if tokenErr != nil {
 		helper.RespondError(w, http.StatusUnauthorized, tokenErr)
 		return
 	}
 
-	helper.RespondSuccess(w, http.StatusAccepted, nil, &newToken, nil)
+	helper.RespondSuccess(w, http.StatusAccepted, nil, &newAccessToken, &newRefreshToken)
 }
