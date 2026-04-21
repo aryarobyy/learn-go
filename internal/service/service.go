@@ -1,7 +1,7 @@
 package service
 
 import (
-	"auth/internal/repository"
+	"github.com/aryarobyy/learn-go/internal/repository"
 
 	"github.com/redis/go-redis/v9"
 )

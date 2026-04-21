@@ -3,7 +3,7 @@ package controller
 import (
 	"net/http"
 
-	"auth/config"
+	"github.com/aryarobyy/learn-go/config"
 )
 
 func GoogleLogin(w http.ResponseWriter, r *http.Request) {

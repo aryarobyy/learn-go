@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"auth/internal/model"
-	"auth/internal/repository"
+	"github.com/aryarobyy/learn-go/internal/model"
+	"github.com/aryarobyy/learn-go/internal/repository"
 )
 
 type UserService interface {

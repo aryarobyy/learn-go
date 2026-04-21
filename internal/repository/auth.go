@@ -1,10 +1,11 @@
 package repository
 
 import (
-	"auth/internal/model"
 	"context"
 	"database/sql"
 	"fmt"
+
+	"github.com/aryarobyy/learn-go/internal/model"
 
 	"github.com/jmoiron/sqlx"
 )

@@ -7,12 +7,12 @@ import (
 	"os"
 	"time"
 
-	"auth/config"
-	"auth/internal/controller"
-	middlewares "auth/internal/middleware"
-	"auth/internal/repository"
-	"auth/internal/router"
-	"auth/internal/service"
+	"github.com/aryarobyy/learn-go/config"
+	"github.com/aryarobyy/learn-go/internal/controller"
+	middlewares "github.com/aryarobyy/learn-go/internal/middleware"
+	"github.com/aryarobyy/learn-go/internal/repository"
+	"github.com/aryarobyy/learn-go/internal/router"
+	"github.com/aryarobyy/learn-go/internal/service"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"

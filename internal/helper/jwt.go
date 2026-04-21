@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"auth/internal/model"
+	"github.com/aryarobyy/learn-go/internal/model"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"

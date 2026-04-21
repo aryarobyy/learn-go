@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"auth/internal/service"
+	"github.com/aryarobyy/learn-go/internal/service"
 )
 
 type Controller interface {

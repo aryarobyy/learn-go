@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"auth/internal/model"
+	"github.com/aryarobyy/learn-go/internal/model"
 
 	"github.com/jmoiron/sqlx"
 )

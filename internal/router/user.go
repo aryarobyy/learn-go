@@ -1,7 +1,7 @@
 package router
 
 import (
-	"auth/internal/controller"
+	"github.com/aryarobyy/learn-go/internal/controller"
 
 	"github.com/go-chi/chi/v5"
 )

@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"auth/internal/helper"
-	"auth/internal/service"
+	"github.com/aryarobyy/learn-go/internal/helper"
+	"github.com/aryarobyy/learn-go/internal/service"
 
 	"github.com/go-chi/chi/v5"
 )

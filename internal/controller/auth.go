@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"auth/internal/helper"
-	"auth/internal/model"
-	"auth/internal/service"
+	"github.com/aryarobyy/learn-go/internal/helper"
+	"github.com/aryarobyy/learn-go/internal/model"
+	"github.com/aryarobyy/learn-go/internal/service"
 )
 
 type AuthController struct {

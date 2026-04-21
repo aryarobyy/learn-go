@@ -1,7 +1,7 @@
 package main
 
 import (
-	"auth/app"
+	"github.com/aryarobyy/learn-go/app"
 	"context"
 	"log"
 	"os"

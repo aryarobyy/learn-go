@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"auth/internal/helper"
-	"auth/internal/model"
-	"auth/internal/repository"
+	"github.com/aryarobyy/learn-go/internal/helper"
+	"github.com/aryarobyy/learn-go/internal/model"
+	"github.com/aryarobyy/learn-go/internal/repository"
 
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/crypto/bcrypt"

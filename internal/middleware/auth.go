@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
-	"auth/internal/helper"
-	"auth/internal/model"
+	"github.com/aryarobyy/learn-go/internal/helper"
+	"github.com/aryarobyy/learn-go/internal/model"
 )
 
 func JwtAuth(n http.Handler) http.Handler {
