@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:14-alpine
+    container_name: go_auth_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=authdb
+    volumes:
+      - authdbdata:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -q -d authdb -U postgres"]
+      timeout: 10s
+      interval: 5s
+      retries: 10
+  redis:
+    image: redis:7-alpine
+    container_name: go_auth_redis
+    restart: always
+    ports:
+      - "6379:6379"
+  migrate:
+    image: migrate/migrate
+    volumes:
+      - ./migrations:/migrations
+    command:
+      - "-path=/migrations"
+      - "-database=postgres://postgres:123@db:5432/authdb?sslmode=disable"
+      - "-verbose"
+      - "up"
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  authdbdata:
