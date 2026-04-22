@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/aryarobyy/learn-go/app"
 	"context"
 	"log"
 	"os"
 	"os/signal"
+
+	"github.com/aryarobyy/learn-go/app"
 
 	"github.com/joho/godotenv"
 )
