@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -29,6 +30,11 @@ type App struct {
 func New() *App {
 	db := config.InitDb()
 	config.GoogleConfig()
+
+	// Auto Migration
+	if err := config.RunMigrations(db); err != nil {
+		log.Fatalf("failed to run migrations: %v", err)
+	}
 
 	redisAddr := os.Getenv("REDIS_ADDR")
 	if redisAddr == "" {
